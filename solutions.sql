@@ -1,3 +1,4 @@
+
 drop database ordersDb;
 create database ordersDb;
 use ordersDb;
@@ -8,6 +9,7 @@ SUPP_NAME varchar(50) NOT NULL,
 SUPP_CITY varchar(50),
 SUPP_PHONE varchar(10) NOT NULL
 );
+
 CREATE TABLE IF NOT EXISTS customer(
 CUS_ID INT NOT NULL,
 CUS_NAME VARCHAR(20) NOT NULL,
@@ -144,7 +146,7 @@ INSERT INTO RATING VALUES(16,116,0);
 
 use ordersdb;
 
-#Q3	Display the total number of customers based on gender who have placed orders of worth at least Rs.3000
+#Q3 Display the total number of customers based on gender who have placed orders of worth at least Rs.3000
 select CUS_GENDER as Gender,  count(CUS_GENDER) as `No of Customers` 
 from customer where CUS_ID In (
 select CUS_ID from `order` where ORD_AMOUNT >= 3000) group by CUS_GENDER ;
@@ -171,7 +173,7 @@ select product.pro_name,`order`.* from `order`,supplier_pricing,product
 where `order`.cus_id = 2 and `order`.PRICING_ID = supplier_pricing.PRICING_ID and product.PRO_ID = supplier_pricing.PRO_ID;
 
 
-#Q5 Display the Supplier details who can supply more than one product.
+#Q5  Display the Supplier details who can supply more than one product.
 select supplier.* from supplier,supplier_pricing where supplier.supp_id = supplier_pricing.supp_id  group by supplier_pricing.supp_id having count(supplier_pricing.supp_id)>1;
 
 #OR 
@@ -180,22 +182,22 @@ select supplier.* from supplier where supplier.supp_id in
 (select supp_id from supplier_pricing group by supp_id having count(supp_id)>1)
 group by supplier.supp_id;
 
-#Q6 Find the least expensive product from each category and print the table with category id, name, product name and price of the product
+#Q6  Find the least expensive product from each category and print the table with category id, name, product name and price of the product
 select category.cat_id,category.cat_name,min(t3.min_price) as Min_price from category inner join
 (select product.cat_id,product.pro_name,t2.* from product inner join 
 (select pro_id,min(supp_price) as Min_price from supplier_pricing group by pro_id)
 as t2 where t2.pro_id = product.pro_id)
 as t3 where t3.cat_id = category.cat_id group by t3.cat_id;
 
-#Q7	Display the Id and Name of the Product ordered after “2021-10-05”.
+#Q7  Display the Id and Name of the Product ordered after “2021-10-05”.
 select product.pro_id,product.pro_name from `order` 
 inner join supplier_pricing on supplier_pricing.pricing_id = `order`.pricing_id 
 inner join product on product.pro_id = supplier_pricing.pro_id where `order.ord_date` > 2021-10-05;
 
-#8	Display customer name and gender whose names start or end with character 'A'.
+#8  Display customer name and gender whose names start or end with character 'A'.
 select customer.cus_name,customer.cus_gender from customer where customer.cus_name like 'A%' or customer.cus_name like '%A';
 
-#9	Create a stored procedure to display supplier id, name, rating and Type_of_Service. For Type_of_Service, If rating =5, print “Excellent Service”,If rating >4 print “Good Service”, If rating >2 print “Average Service” else print “Poor Service”.
+#9  Create a stored procedure to display supplier id, name, rating and Type_of_Service. For Type_of_Service, If rating =5, print “Excellent Service”,If rating >4 print “Good Service”, If rating >2 print “Average Service” else print “Poor Service”.
 DELIMITER //
 create procedure proc()
 BEGIN
@@ -213,6 +215,7 @@ BEGIN
     on test.pricing_id = supplier_pricing.pricing_id) as test2 
     group by supplier_pricing.supp_id)
     as final inner join supplier where final.supp_id = supplier.supp_id ) as report; 
+
 END //
 DELIMITER ;
 call proc();
